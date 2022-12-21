@@ -10,4 +10,14 @@
 #  updated_at      :datetime         not null
 #
 class User < ApplicationRecord
+
+# F - Find_by_credentials
+# I - is_password? +
+# G - generate_session_token
+# V - validates +
+# A - attr_reader
+# P - password=
+# E - ensure_session_token
+# B - before_validation
+# R - reset_session_token
 end

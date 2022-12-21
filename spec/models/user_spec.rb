@@ -20,7 +20,7 @@ RSpec.describe User, type: :model do
 
   it { should validate_length_of(:password).is_at_least(6) }
 
-  describe 'uniqueness' do 
+  describe "uniqueness" do 
     before :each do 
       create(:user)
     end
@@ -28,6 +28,35 @@ RSpec.describe User, type: :model do
     it { should validate_uniqueness_of(:session_token) }
   end
 
+  describe "is_password?" do
+    let!(:user) {create(:user)}
+    # why can the above be written in shorthand vs line 50
+
+    context "with a valid password" do
+      it "should return true" do
+        expect(user.is_password?("password")).to be true
+      end
+    end
+
+    context "with an invalid password" do
+      it "should return false" do
+        expect(user.is_password?("nutritiousnuts")).to be false
+      end
+    end
+  end
+
+  describe "password hashing" do
+    it "does not save passwords to the database" do
+      FactoryBot.create(:user, username: "Harry Potter")
+      user = User.find_by(username: "Harry Potter")
+      expect(user.password).not_to eq("password")
+    end
+
+    it "hashes password using BCrypt" do
+      expect(BCrypt::Password).to receive(:create).with("asdflkj")
+      FactoryBot.build(:user, password:"asdflkj")
+    end
+  end
 
   # users can sign up
   # users can log in
@@ -35,6 +64,5 @@ RSpec.describe User, type: :model do
   # users make goals
   # users can post comments on profiles (other users)
   # users can post comments on goals (thier own or others')
-
 
 end
