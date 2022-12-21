@@ -20,11 +20,19 @@ RSpec.describe User, type: :model do
 
   it { should validate_length_of(:password).is_at_least(6) }
 
-  describe "uniqueness" do 
+  describe "username_uniqueness" do 
     before :each do 
       create(:user)
     end
     it { should validate_uniqueness_of(:username) }
+    # it { should validate_uniqueness_of(:session_token) }
+  end
+
+  describe "session_token_uniqueness" do 
+    before :each do 
+      create(:user)
+    end
+    # it { should validate_uniqueness_of(:username) }
     it { should validate_uniqueness_of(:session_token) }
   end
 
@@ -47,8 +55,9 @@ RSpec.describe User, type: :model do
 
   describe "password hashing" do
     it "does not save passwords to the database" do
-      FactoryBot.create(:user, username: "Harry Potter")
-      user = User.find_by(username: "Harry Potter")
+      # FactoryBot.create(:user, username: "Harry Potter")
+      # user = User.find_by(username: "Harry Potter")
+      let!(:user) {create(:user, username: "Harry Potter")}
       expect(user.password).not_to eq("password")
     end
 
@@ -57,6 +66,21 @@ RSpec.describe User, type: :model do
       FactoryBot.build(:user, password:"asdflkj")
     end
   end
+
+  # find_by_credentials
+  describe "find_by_credentials" do 
+    it "finds user by username" do
+      FactoryBot.create(:user, username: "Harry Potter")
+      expect(User.last.username).to eq("Harry Potter")
+    end
+
+    it "calls the is_password? method" do 
+      let!(:user) {create(:user)}
+      expect(user.is_password?("password")).to be true
+  
+    end
+  end
+
 
   # users can sign up
   # users can log in
